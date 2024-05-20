@@ -1,3 +1,5 @@
+package task1;
+
 public class Employee {
     private String firstName;
     private String lastName;

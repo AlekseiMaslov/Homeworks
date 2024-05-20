@@ -1,4 +1,7 @@
+package task1;
+
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,12 @@ public class DBManager {
     private static final String SALARY_UPDATE_QUERY =
             "UPDATE employee_data " +
                     "SET salary = salary + ?";
+    private static final String INSERT_EMPLOYEE_QUERY =
+            "INSERT INTO employee (id, last_name, first_name, birth_date) " +
+                    "VALUES (?, ?, ?, ?)";
+    private static final String DELETE_EMPLOYEE_QUERY =
+            "DELETE FROM employee " +
+                    "WHERE id = ?";
 
     public List<Employee> getEmployeeData() {
         List<Employee> employees = new ArrayList<>();
@@ -48,6 +57,34 @@ public class DBManager {
             ps.setInt(1, newSalary);
             ps.executeQuery();
             System.out.println("Data has been updated");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void insertEmployee(int id, String lastName, String firstName, LocalDate birthDate) {
+        try (
+                Connection connection = DriverManager.getConnection(DBConfig.URL, DBConfig.USER, DBConfig.PASSWORD);
+                PreparedStatement ps = connection.prepareStatement(INSERT_EMPLOYEE_QUERY);
+        ) {
+            ps.setInt(1, id);
+            ps.setString(2, lastName);
+            ps.setString(3, firstName);
+            ps.setDate(4, Date.valueOf(birthDate));
+            int numberOfCreatedRows = ps.executeUpdate();
+            System.out.println(numberOfCreatedRows + " rows have been inserted");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+    public void deleteEmployee(int id) {
+        try (
+                Connection connection = DriverManager.getConnection(DBConfig.URL, DBConfig.USER, DBConfig.PASSWORD);
+                PreparedStatement ps = connection.prepareStatement(DELETE_EMPLOYEE_QUERY);
+        ) {
+            ps.setInt(1, id);
+            int numberOfCreatedRows = ps.executeUpdate();
+            System.out.println(numberOfCreatedRows + " rows have been deleted");
         } catch (SQLException e) {
             System.out.println(e);
         }
